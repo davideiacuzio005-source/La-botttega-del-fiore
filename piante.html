@@ -14,10 +14,70 @@ body {
   background:#f7f2eb;
 }
 
+/* NAVBAR */
+nav {
+  position:fixed;
+  top:0;
+  width:100%;
+  background:#f7f2eb;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 30px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  z-index:100;
+}
+
+.logo {
+  font-family:'Cormorant Garamond', serif;
+  font-size:24px;
+}
+
+.nav-links {
+  display:flex;
+  gap:20px;
+}
+
+.nav-links a {
+  text-decoration:none;
+  color:#2c2520;
+}
+
+.call-btn {
+  background:#4a5e3a;
+  color:#fff;
+  padding:8px 15px;
+  border-radius:20px;
+}
+
+/* MOBILE */
+.hamburger {
+  display:none;
+  font-size:24px;
+  cursor:pointer;
+}
+
+.mobile-menu {
+  display:none;
+  flex-direction:column;
+  background:#fff;
+  position:absolute;
+  top:60px;
+  width:100%;
+  left:0;
+}
+
+.mobile-menu a {
+  padding:15px;
+  border-bottom:1px solid #eee;
+  text-decoration:none;
+  color:#000;
+}
+
 /* HEADER */
 header {
   text-align:center;
-  padding:40px 20px;
+  padding:100px 20px 40px;
 }
 
 h1 {
@@ -25,7 +85,7 @@ h1 {
   font-size:40px;
 }
 
-/* BOTTONI FILTRO */
+/* FILTRI */
 .filters {
   text-align:center;
   margin-bottom:30px;
@@ -38,16 +98,14 @@ h1 {
   background:#ddd;
   cursor:pointer;
   border-radius:20px;
-  transition:0.3s;
 }
 
-.filter-btn.active,
-.filter-btn:hover {
+.filter-btn.active {
   background:#4a5e3a;
   color:#fff;
 }
 
-/* GRIGLIA */
+/* GRID */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
@@ -55,17 +113,11 @@ h1 {
   padding:20px;
 }
 
-/* CARD */
 .card {
   background:#fff;
   border-radius:12px;
   overflow:hidden;
   text-align:center;
-  transition:0.3s;
-}
-
-.card:hover {
-  transform:translateY(-5px);
 }
 
 .card img {
@@ -74,33 +126,53 @@ h1 {
   object-fit:cover;
 }
 
-.card h3 {
-  padding:15px;
-  font-family:'Cormorant Garamond', serif;
-}
-
 /* CTA */
 .cta {
   text-align:center;
-  padding:50px 20px;
+  padding:50px;
 }
 
 .btn {
-  display:inline-block;
   padding:15px 25px;
   background:#2c2520;
   color:#fff;
   text-decoration:none;
   border-radius:5px;
 }
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links { display:none; }
+  .hamburger { display:block; }
+}
 </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">La Bottega del Fiore</div>
+
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Fiori</a>
+    <a href="#">Contatti</a>
+    <a href="tel:0522576309" class="call-btn">Chiama</a>
+  </div>
+
+  <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#">Home</a>
+    <a href="#">Fiori</a>
+    <a href="#">Contatti</a>
+    <a href="tel:0522576309">Chiama</a>
+  </div>
+</nav>
+
 <header>
-  <h1>La Bottega del Fiore</h1>
-  <p>I nostri fiori di stagione</p>
+  <h1>I nostri fiori</h1>
 </header>
 
 <!-- FILTRI -->
@@ -112,61 +184,62 @@ h1 {
   <button class="filter-btn" data-filter="autunno">Autunnali</button>
 </div>
 
-<!-- GRIGLIA FIORI -->
+<!-- GRID -->
 <div class="grid">
 
-  <!-- ESTATE -->
-  <div class="card" data-cat="estate">
-    <img src="https://source.unsplash.com/400x400/?sunflower">
-    <h3>Girasole</h3>
-  </div>
+<div class="card" data-cat="estate">
+<img src="https://source.unsplash.com/400x400/?sunflower">
+<h3>Girasole</h3>
+</div>
 
-  <div class="card" data-cat="estate">
-    <img src="https://source.unsplash.com/400x400/?lavender">
-    <h3>Lavanda</h3>
-  </div>
+<div class="card" data-cat="estate">
+<img src="https://source.unsplash.com/400x400/?lavender">
+<h3>Lavanda</h3>
+</div>
 
-  <!-- INVERNO -->
-  <div class="card" data-cat="inverno">
-    <img src="https://source.unsplash.com/400x400/?poinsettia">
-    <h3>Stella di Natale</h3>
-  </div>
+<div class="card" data-cat="inverno">
+<img src="https://source.unsplash.com/400x400/?poinsettia">
+<h3>Stella di Natale</h3>
+</div>
 
-  <div class="card" data-cat="inverno">
-    <img src="https://source.unsplash.com/400x400/?cyclamen">
-    <h3>Ciclamino</h3>
-  </div>
+<div class="card" data-cat="inverno">
+<img src="https://source.unsplash.com/400x400/?cyclamen">
+<h3>Ciclamino</h3>
+</div>
 
-  <!-- PRIMAVERA -->
-  <div class="card" data-cat="primavera">
-    <img src="https://source.unsplash.com/400x400/?tulip">
-    <h3>Tulipani</h3>
-  </div>
+<div class="card" data-cat="primavera">
+<img src="https://source.unsplash.com/400x400/?tulip">
+<h3>Tulipani</h3>
+</div>
 
-  <div class="card" data-cat="primavera">
-    <img src="https://source.unsplash.com/400x400/?daisy">
-    <h3>Margherite</h3>
-  </div>
+<div class="card" data-cat="primavera">
+<img src="https://source.unsplash.com/400x400/?daisy">
+<h3>Margherite</h3>
+</div>
 
-  <!-- AUTUNNO -->
-  <div class="card" data-cat="autunno">
-    <img src="https://source.unsplash.com/400x400/?chrysanthemum">
-    <h3>Crisantemi</h3>
-  </div>
+<div class="card" data-cat="autunno">
+<img src="https://source.unsplash.com/400x400/?chrysanthemum">
+<h3>Crisantemi</h3>
+</div>
 
-  <div class="card" data-cat="autunno">
-    <img src="https://source.unsplash.com/400x400/?dahlia">
-    <h3>Dalia</h3>
-  </div>
+<div class="card" data-cat="autunno">
+<img src="https://source.unsplash.com/400x400/?dahlia">
+<h3>Dalia</h3>
+</div>
 
 </div>
 
-<!-- CHIAMACI -->
+<!-- CTA -->
 <div class="cta">
   <a href="tel:0522576309" class="btn">Chiamaci</a>
 </div>
 
 <script>
+function toggleMenu(){
+  const menu = document.getElementById("mobileMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
 const buttons = document.querySelectorAll(".filter-btn");
 const cards = document.querySelectorAll(".card");
 
