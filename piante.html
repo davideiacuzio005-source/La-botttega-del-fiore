@@ -1,1353 +1,192 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Piante — La Bottega del Fiore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
- 
-    :root {
-      --cream:  #f7f2eb;
-      --petal:  #e8d5c4;
-      --sand:   #d6c5ae;
-      --sage:   #7a8c6e;
-      --moss:   #4a5e3a;
-      --blush:  #c9877a;
-      --ink:    #2c2520;
-      --gold:   #b89b6a;
-      --light:  #ede7dd;
-      --deep:   #1e2a17;
-    }
- 
-    html { scroll-behavior: smooth; }
- 
-    body {
-      font-family: 'Jost', sans-serif;
-      background: var(--cream);
-      color: var(--ink);
-      overflow-x: hidden;
-    }
- 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes sway {
-      0%, 100% { transform: rotate(-5deg); }
-      50%       { transform: rotate(5deg); }
-    }
- 
-    /* ═══════════════════════ NAVBAR ═══════════════════════ */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(247,242,235,0.93);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(184,155,106,0.25);
-      transition: box-shadow 0.3s;
-    }
-    nav.scrolled { box-shadow: 0 4px 30px rgba(44,37,32,0.08); }
- 
-    .nav-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0 2.5rem; height: 72px;
-      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-    }
-    .nav-left, .nav-right { display: flex; align-items: center; gap: 2.2rem; }
-    .nav-right { justify-content: flex-end; }
- 
-    .nav-link {
-      font-size: 0.72rem; font-weight: 400; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--ink); text-decoration: none;
-      position: relative; padding-bottom: 2px; transition: color 0.3s;
-    }
-    .nav-link::after {
-      content: ''; position: absolute; bottom: -2px; left: 0;
-      width: 0; height: 1px; background: var(--blush);
-      transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    .nav-link:hover { color: var(--blush); }
-    .nav-link:hover::after { width: 100%; }
-    .nav-link.active { color: var(--moss); }
-    .nav-link.active::after { width: 100%; background: var(--moss); }
- 
-    .logo { display: flex; flex-direction: column; align-items: center; text-decoration: none; }
-    .logo-mark { width: 22px; height: 22px; position: relative; margin-bottom: 1px; }
-    .logo-mark::before, .logo-mark::after { content: ''; position: absolute; border-radius: 50%; }
-    .logo-mark::before {
-      width: 10px; height: 10px; background: var(--blush);
-      top: 0; left: 6px; animation: sway 6s ease-in-out infinite;
-    }
-    .logo-mark::after {
-      width: 8px; height: 8px; background: var(--moss);
-      bottom: 0; left: 7px; animation: sway 6s ease-in-out infinite reverse;
-    }
-    .logo-name {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.35rem;
-      font-weight: 300; letter-spacing: 0.08em; color: var(--ink); white-space: nowrap;
-    }
-    .logo-sub {
-      font-size: 0.58rem; font-weight: 300; letter-spacing: 0.28em;
-      text-transform: uppercase; color: var(--gold); margin-top: 1px;
-    }
-    .nav-cta {
-      font-size: 0.68rem; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--cream); background: var(--moss); text-decoration: none;
-      padding: 0.55rem 1.3rem; border: 1px solid var(--moss); transition: background 0.3s, color 0.3s;
-    }
-    .nav-cta:hover { background: transparent; color: var(--moss); }
- 
-    .hamburger {
-      display: none; flex-direction: column; gap: 5px;
-      cursor: pointer; background: none; border: none; padding: 4px;
-    }
-    .hamburger span { display: block; width: 24px; height: 1px; background: var(--ink); transition: transform 0.3s, opacity 0.3s; }
-    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-    .hamburger.open span:nth-child(2) { opacity: 0; }
-    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
- 
-    .mobile-menu {
-      position: fixed; top: 72px; left: 0; right: 0; background: var(--cream);
-      border-bottom: 1px solid rgba(184,155,106,0.3);
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), padding 0.3s; z-index: 99;
-    }
-    .mobile-menu.open { max-height: 500px; padding: 1.5rem 2.5rem 2rem; }
-    .mobile-link {
-      display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.7rem;
-      font-weight: 300; font-style: italic; color: var(--ink); text-decoration: none;
-      padding: 0.6rem 0; border-bottom: 1px solid rgba(184,155,106,0.2);
-      transition: color 0.2s, padding-left 0.3s;
-    }
-    .mobile-link:last-child { border-bottom: none; }
-    .mobile-link:hover { color: var(--blush); padding-left: 0.5rem; }
- 
-    /* ═══════════════════════ HERO — DARK ═══════════════════════ */
-    .hero {
-      padding-top: 72px;
-      min-height: 100vh;
-      background: var(--deep);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      position: relative;
-      overflow: hidden;
-    }
- 
-    /* Subtle vertical stripe texture */
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(
-        90deg, transparent 0px, transparent 48px,
-        rgba(255,255,255,0.015) 48px, rgba(255,255,255,0.015) 49px
-      );
-      pointer-events: none;
-    }
- 
-    /* Giant abstract leaf — CSS only */
-    .hero-art {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
- 
-    .leaf-shape {
-      position: absolute;
-      width: 420px; height: 520px;
-      background: linear-gradient(160deg, rgba(74,94,58,0.55) 0%, rgba(30,42,23,0.9) 100%);
-      border-radius: 50% 10% 50% 10%;
-      transform: rotate(-20deg) translateX(60px);
-      box-shadow: inset -40px -40px 80px rgba(0,0,0,0.3);
-    }
-    .leaf-shape::before {
-      content: ''; position: absolute;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 2px; height: 80%;
-      background: linear-gradient(to bottom, rgba(184,155,106,0.5), transparent);
-    }
-    /* Vein lines */
-    .leaf-shape::after {
-      content: ''; position: absolute;
-      top: 30%; left: 50%;
-      width: 45%; height: 1px;
-      background: rgba(184,155,106,0.25);
-      transform: rotate(30deg);
-      box-shadow:
-        0 30px 0 rgba(184,155,106,0.15),
-        0 60px 0 rgba(184,155,106,0.1),
-        0 90px 0 rgba(184,155,106,0.07);
-    }
- 
-    .leaf-orb {
-      position: absolute;
-      width: 260px; height: 260px; border-radius: 50%;
-      border: 1px solid rgba(184,155,106,0.18);
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      box-shadow: 0 0 0 50px rgba(184,155,106,0.04), 0 0 0 100px rgba(184,155,106,0.02);
-    }
- 
-    .hero-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 5rem 4rem 5rem 3rem;
-      position: relative;
-      z-index: 2;
-    }
- 
-    .hero-label {
-      font-size: 0.64rem; letter-spacing: 0.32em; text-transform: uppercase;
-      color: var(--gold); font-weight: 300;
-      display: flex; align-items: center; gap: 0.8rem; margin-bottom: 2rem;
-      opacity: 0; animation: fadeUp 0.9s 0.3s forwards;
-    }
-    .hero-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
- 
-    .hero-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3.2rem, 5.5vw, 5.8rem); font-weight: 300; line-height: 1.02;
-      color: var(--cream); margin-bottom: 1.8rem;
-      opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
-    }
-    .hero-title em { display: block; font-style: italic; color: var(--sage); }
- 
-    .hero-desc {
-      font-size: 0.88rem; font-weight: 300; line-height: 1.9;
-      color: rgba(247,242,235,0.5); max-width: 380px; margin-bottom: 3rem;
-      opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
-    }
- 
-    .hero-actions {
-      display: flex; gap: 1rem; flex-wrap: wrap;
-      opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
-    }
-    .btn-sage {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 0.9rem 2.2rem; background: var(--sage); color: var(--cream);
-      text-decoration: none; border: 1px solid var(--sage); transition: background 0.3s, color 0.3s;
-    }
-    .btn-sage:hover { background: transparent; color: var(--sage); }
-    .btn-ghost {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 0.9rem 2.2rem; background: transparent; color: rgba(247,242,235,0.6);
-      text-decoration: none; border: 1px solid rgba(247,242,235,0.2); transition: border-color 0.3s, color 0.3s;
-    }
-    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
- 
-    .hero-scroll {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
-      opacity: 0; animation: fadeUp 0.8s 1.3s forwards;
-    }
-    .hero-scroll span {
-      font-size: 0.55rem; letter-spacing: 0.28em; text-transform: uppercase;
-      color: rgba(247,242,235,0.3);
-    }
-    .scroll-line {
-      width: 1px; height: 40px;
-      background: linear-gradient(to bottom, rgba(184,155,106,0.6), transparent);
-      animation: scrollPulse 2s ease-in-out infinite;
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; transform: scaleY(1); }
-      50%       { opacity: 1;   transform: scaleY(1.2); }
-    }
- 
-    /* ═══════════════════════ CATEGORIES STRIP ═══════════════════════ */
-    .categories {
-      background: var(--ink);
-      border-top: 1px solid rgba(184,155,106,0.12);
-    }
-    .categories-inner {
-      max-width: 1280px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(4, 1fr);
-    }
-    .cat-item {
-      padding: 2.2rem 2.5rem;
-      border-right: 1px solid rgba(184,155,106,0.1);
-      cursor: pointer;
-      transition: background 0.3s;
-      text-decoration: none;
-      display: block;
-    }
-    .cat-item:last-child { border-right: none; }
-    .cat-item:hover { background: rgba(184,155,106,0.05); }
-    .cat-item.current { background: rgba(74,94,58,0.2); }
- 
-    .cat-num {
-      font-family: 'Cormorant Garamond', serif; font-size: 0.7rem;
-      color: rgba(184,155,106,0.4); letter-spacing: 0.14em; margin-bottom: 0.4rem;
-    }
-    .cat-name {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem;
-      font-weight: 400; color: var(--cream); margin-bottom: 0.3rem;
-    }
-    .cat-name em { font-style: italic; color: var(--sage); }
-    .cat-count {
-      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(247,242,235,0.3);
-    }
- 
-    /* ═══════════════════════ FILTER + INTRO ═══════════════════════ */
-    .section-intro {
-      max-width: 1280px; margin: 0 auto;
-      padding: 5rem 2.5rem 0;
-      display: grid; grid-template-columns: 1fr auto;
-      align-items: end; gap: 2rem;
-    }
-    .section-intro-text { }
-    .section-label {
-      font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--gold); font-weight: 300; margin-bottom: 0.8rem;
-    }
-    .section-heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 300;
-      line-height: 1.1; color: var(--ink);
-    }
-    .section-heading em { font-style: italic; color: var(--moss); }
- 
-    .filter-wrap {
-      display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0;
-    }
-    .filter-btn {
-      font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.14em;
-      text-transform: uppercase; font-weight: 400; padding: 0.45rem 1.2rem;
-      border: 1px solid rgba(44,37,32,0.18); background: transparent;
-      color: rgba(44,37,32,0.45); cursor: pointer; transition: all 0.25s;
-    }
-    .filter-btn:hover { border-color: var(--sage); color: var(--moss); }
-    .filter-btn.active { background: var(--moss); border-color: var(--moss); color: var(--cream); }
- 
-    .rule-line {
-      height: 1px;
-      background: linear-gradient(to right, var(--gold) 0%, rgba(184,155,106,0.2) 60%, transparent 100%);
-      max-width: 1280px; margin: 2.5rem auto 0; padding: 0 2.5rem;
-    }
-    .rule-line-inner { height: 1px; background: inherit; }
- 
-    /* ═══════════════════════ PLANTS GRID ═══════════════════════ */
-    .plants-section {
-      max-width: 1280px; margin: 0 auto; padding: 3rem 2.5rem 6rem;
-    }
- 
-    .plants-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.2rem;
-    }
- 
-    /* Featured row — first 2 are larger */
-    .plant-card {
-      background: var(--light);
-      position: relative; overflow: hidden; cursor: pointer;
-      opacity: 0; animation: fadeUp 0.65s forwards;
-      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-    }
-    .plant-card:hover { transform: translateY(-5px); }
- 
-    .plant-card:nth-child(1) { animation-delay: 0.9s;  grid-column: span 2; }
-    .plant-card:nth-child(2) { animation-delay: 1.0s;  }
-    .plant-card:nth-child(3) { animation-delay: 1.05s; }
-    .plant-card:nth-child(4) { animation-delay: 1.1s;  }
-    .plant-card:nth-child(5) { animation-delay: 1.15s; }
-    .plant-card:nth-child(6) { animation-delay: 1.2s;  grid-column: span 2; }
-    .plant-card:nth-child(7) { animation-delay: 1.25s; }
-    .plant-card:nth-child(8) { animation-delay: 1.3s;  }
-    .plant-card:nth-child(9) { animation-delay: 1.35s; }
- 
-    /* ── Plant visuals — pure CSS, no images ── */
-    .plant-vis {
-      width: 100%; position: relative; overflow: hidden;
-      transition: filter 0.4s;
-    }
-    .plant-card:hover .plant-vis { filter: brightness(0.94); }
- 
-    .plant-card:nth-child(1) .plant-vis,
-    .plant-card:nth-child(6) .plant-vis { height: 320px; }
-    .plant-card:nth-child(2) .plant-vis { height: 320px; }
-    .plant-card:nth-child(3) .plant-vis,
-    .plant-card:nth-child(4) .plant-vis,
-    .plant-card:nth-child(5) .plant-vis { height: 240px; }
-    .plant-card:nth-child(7) .plant-vis,
-    .plant-card:nth-child(8) .plant-vis,
-    .plant-card:nth-child(9) .plant-vis { height: 240px; }
- 
-    /* Monstera — ampia e tropicale */
-    .vis-monstera {
-      background: linear-gradient(145deg, #2d3d25 0%, var(--deep) 100%);
-    }
-    .vis-monstera::before {
-      content: ''; position: absolute;
-      width: 200px; height: 240px;
-      background: rgba(74,94,58,0.4);
-      border-radius: 50% 50% 50% 0 / 60% 60% 40% 40%;
-      top: 20%; left: 50%; transform: translateX(-50%) rotate(-15deg);
-      clip-path: polygon(50% 0%, 100% 40%, 85% 100%, 50% 80%, 15% 100%, 0% 40%);
-    }
-    .vis-monstera::after {
-      content: ''; position: absolute;
-      width: 2px; height: 55%;
-      background: rgba(184,155,106,0.3);
-      bottom: 0; left: 50%; transform: translateX(-50%);
-    }
- 
-    /* Pothos — piccola e geometrica */
-    .vis-pothos {
-      background: linear-gradient(135deg, #3a4e30 0%, #253320 100%);
-    }
-    .vis-pothos::before {
-      content: ''; position: absolute;
-      width: 80px; height: 100px;
-      background: rgba(122,140,110,0.45);
-      border-radius: 50% 50% 40% 40%;
-      top: 25%; left: 30%;
-      transform: rotate(-20deg);
-    }
-    .vis-pothos::after {
-      content: ''; position: absolute;
-      width: 70px; height: 90px;
-      background: rgba(74,94,58,0.5);
-      border-radius: 50% 50% 40% 40%;
-      top: 30%; right: 25%;
-      transform: rotate(15deg);
-    }
- 
-    /* Ficus — elegante, scuro */
-    .vis-ficus {
-      background: var(--ink);
-    }
-    .vis-ficus::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 70% at 50% 80%, rgba(74,94,58,0.25) 0%, transparent 70%);
-    }
-    .vis-ficus::after {
-      content: ''; position: absolute;
-      width: 3px; height: 60%;
-      background: rgba(184,155,106,0.2);
-      bottom: 0; left: 50%; transform: translateX(-50%);
-      box-shadow: -30px -60px 0 -1px rgba(74,94,58,0.3), 30px -40px 0 -1px rgba(74,94,58,0.25);
-    }
- 
-    /* Cactus — secco, lineare */
-    .vis-cactus {
-      background: linear-gradient(170deg, #e8ddd0 0%, var(--sand) 100%);
-    }
-    .vis-cactus::before {
-      content: ''; position: absolute;
-      width: 28px; height: 110px;
-      background: rgba(74,94,58,0.55);
-      border-radius: 14px;
-      bottom: 0; left: 50%; transform: translateX(-50%);
-    }
-    .vis-cactus::after {
-      content: ''; position: absolute;
-      width: 50px; height: 40px;
-      background: rgba(74,94,58,0.45);
-      border-radius: 25px 25px 0 0;
-      bottom: 70px; left: calc(50% + 12px);
-    }
- 
-    /* Orchidea — delicata, petal */
-    .vis-orchidea {
-      background: linear-gradient(140deg, #efe4dc 0%, var(--petal) 100%);
-    }
-    .vis-orchidea::before {
-      content: ''; position: absolute;
-      width: 2px; height: 65%;
-      background: rgba(44,37,32,0.2);
-      bottom: 0; left: 50%; transform: translateX(-50%);
-    }
-    .vis-orchidea::after {
-      content: ''; position: absolute;
-      width: 70px; height: 70px;
-      border-radius: 50%;
-      border: 24px solid rgba(201,135,122,0.3);
-      top: 18%; left: 50%; transform: translateX(-50%);
-      box-shadow: 0 0 0 10px rgba(201,135,122,0.1);
-    }
- 
-    /* Palma — tropicale, aperta */
-    .vis-palma {
-      background: linear-gradient(160deg, #1a2e1a 0%, #0f1f0f 100%);
-    }
-    .vis-palma::before {
-      content: ''; position: absolute;
-      width: 4px; height: 70%;
-      background: rgba(184,155,106,0.35);
-      bottom: 0; left: 50%; transform: translateX(-50%);
-    }
-    .vis-palma::after {
-      content: ''; position: absolute;
-      width: 180px; height: 60px;
-      background: rgba(74,94,58,0.5);
-      border-radius: 50%;
-      top: 10%; left: 50%; transform: translateX(-50%) rotate(-5deg);
-      clip-path: polygon(10% 50%, 30% 0%, 50% 30%, 70% 0%, 90% 50%, 70% 80%, 50% 100%, 30% 80%);
-    }
- 
-    /* Succulent — compatta, geometrica */
-    .vis-succulent {
-      background: linear-gradient(135deg, #c8d8be 0%, #a8bea0 100%);
-    }
-    .vis-succulent::before {
-      content: ''; position: absolute;
-      width: 100px; height: 100px;
-      background: rgba(74,94,58,0.3);
-      border-radius: 50%;
-      bottom: 20%; left: 50%; transform: translateX(-50%);
-      box-shadow:
-        -35px 10px 0 -5px rgba(74,94,58,0.25),
-         35px 10px 0 -5px rgba(74,94,58,0.25),
-        -20px -25px 0 -8px rgba(74,94,58,0.2),
-         20px -25px 0 -8px rgba(74,94,58,0.2);
-    }
- 
-    /* Ulivo — mediterraneo */
-    .vis-ulivo {
-      background: linear-gradient(155deg, #c9c4b0 0%, #a89f89 100%);
-    }
-    .vis-ulivo::before {
-      content: ''; position: absolute;
-      width: 6px; height: 60%;
-      background: rgba(94,78,52,0.5);
-      bottom: 0; left: 50%; transform: translateX(-50%) rotate(3deg);
-      border-radius: 3px;
-    }
-    .vis-ulivo::after {
-      content: ''; position: absolute;
-      width: 140px; height: 130px;
-      background: rgba(122,140,110,0.4);
-      border-radius: 55% 45% 50% 50% / 40% 40% 60% 60%;
-      top: 5%; left: 50%; transform: translateX(-50%);
-    }
- 
-    /* Zen — dark, minimal */
-    .vis-zen {
-      background: #1c1814;
-    }
-    .vis-zen::before {
-      content: ''; position: absolute; inset: 24px;
-      border: 1px solid rgba(184,155,106,0.12);
-    }
-    .vis-zen::after {
-      content: ''; position: absolute;
-      width: 1px; height: 55%;
-      background: linear-gradient(to bottom, rgba(184,155,106,0.5), transparent);
-      bottom: 10%; left: 50%; transform: translateX(-50%);
-      box-shadow:
-        -20px 30px 0 0.5px rgba(184,155,106,0.25),
-         20px 15px 0 0.5px rgba(184,155,106,0.2);
-    }
- 
-    /* Badge */
-    .plant-badge {
-      position: absolute; top: 1.2rem; left: 1.2rem; z-index: 2;
-      font-size: 0.56rem; letter-spacing: 0.22em; text-transform: uppercase;
-      padding: 0.3rem 0.75rem; font-weight: 400; pointer-events: none;
-    }
-    .badge-cream  { background: rgba(247,242,235,0.88); color: var(--ink); }
-    .badge-dark   { background: rgba(44,37,32,0.78); color: var(--cream); }
-    .badge-gold   { background: var(--gold); color: var(--cream); }
-    .badge-sage   { background: var(--sage); color: var(--cream); }
-    .badge-new    { background: var(--blush); color: var(--cream); }
- 
-    /* Difficulty dots */
-    .plant-diff {
-      position: absolute; top: 1.2rem; right: 1.2rem; z-index: 2;
-      display: flex; gap: 4px; align-items: center;
-    }
-    .diff-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(247,242,235,0.25);
-    }
-    .diff-dot.on { background: rgba(247,242,235,0.75); }
- 
-    /* Card body */
-    .plant-body { padding: 1.4rem 1.6rem 1.6rem; display: flex; flex-direction: column; gap: 0.4rem; }
- 
-    .plant-num {
-      font-family: 'Cormorant Garamond', serif; font-size: 0.7rem;
-      color: var(--gold); letter-spacing: 0.14em;
-    }
-    .plant-name {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.45rem;
-      font-weight: 400; line-height: 1.15; color: var(--ink);
-    }
-    .plant-name em { font-style: italic; color: var(--moss); }
-    .plant-latin {
-      font-family: 'Cormorant Garamond', serif; font-size: 0.8rem;
-      font-style: italic; color: rgba(44,37,32,0.38); margin-top: -2px;
-    }
-    .plant-desc {
-      font-size: 0.78rem; font-weight: 300; line-height: 1.75;
-      color: rgba(44,37,32,0.55); margin-top: 0.3rem;
-    }
- 
-    .plant-meta {
-      display: flex; gap: 1.5rem; margin-top: 0.5rem;
-    }
-    .meta-item { }
-    .meta-label {
-      font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(44,37,32,0.35); margin-bottom: 2px;
-    }
-    .meta-val {
-      font-size: 0.75rem; font-weight: 400; color: var(--moss);
-    }
- 
-    .plant-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 0.9rem; padding-top: 0.9rem;
-      border-top: 1px solid rgba(184,155,106,0.18);
-    }
-    .plant-price {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem;
-      font-weight: 300; color: var(--ink);
-    }
-    .plant-price span {
-      font-size: 0.66rem; font-family: 'Jost', sans-serif; font-weight: 300;
-      letter-spacing: 0.1em; color: rgba(44,37,32,0.38); margin-left: 3px;
-    }
-    .plant-cta {
-      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.45rem;
-      transition: gap 0.3s, color 0.3s;
-    }
-    .plant-cta::after { content: '→'; transition: transform 0.3s; }
-    .plant-card:hover .plant-cta { color: var(--blush); gap: 0.7rem; }
-    .plant-card:hover .plant-cta::after { transform: translateX(3px); }
- 
-    /* ═══════════════════════ CURA SECTION ═══════════════════════ */
-    .cura-section {
-      background: var(--ink); padding: 5rem 2.5rem; position: relative; overflow: hidden;
-    }
-    .cura-section::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(
-        135deg, transparent 0px, transparent 40px,
-        rgba(184,155,106,0.03) 40px, rgba(184,155,106,0.03) 41px
-      );
-    }
-    .cura-inner { max-width: 1280px; margin: 0 auto; position: relative; }
- 
-    .cura-header {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
-      margin-bottom: 4rem; align-items: end;
-    }
-    .cura-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300; color: var(--cream); line-height: 1.1;
-      opacity: 0;
-    }
-    .cura-title em { font-style: italic; color: var(--gold); }
-    .cura-title.visible { animation: fadeUp 0.8s forwards; }
- 
-    .cura-intro {
-      font-size: 0.83rem; font-weight: 300; line-height: 1.8;
-      color: rgba(247,242,235,0.45); align-self: end;
-      opacity: 0;
-    }
-    .cura-intro.visible { animation: fadeUp 0.8s 0.15s forwards; }
- 
-    .cura-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
-    }
-    .cura-item {
-      padding: 2rem 2rem 2rem 0;
-      border-right: 1px solid rgba(184,155,106,0.1);
-      opacity: 0;
-    }
-    .cura-item:last-child { border-right: none; padding-right: 0; }
-    .cura-item:not(:first-child) { padding-left: 2rem; }
-    .cura-item.visible { animation: fadeUp 0.7s forwards; }
-    .cura-item:nth-child(1).visible { animation-delay: 0.1s; }
-    .cura-item:nth-child(2).visible { animation-delay: 0.18s; }
-    .cura-item:nth-child(3).visible { animation-delay: 0.26s; }
-    .cura-item:nth-child(4).visible { animation-delay: 0.34s; }
-    .cura-item:nth-child(5).visible { animation-delay: 0.42s; }
- 
-    /* Abstract icon shapes — pure CSS */
-    .cura-icon {
-      width: 36px; height: 36px; position: relative; margin-bottom: 1.2rem;
-    }
-    .icon-acqua::before {
-      content: ''; position: absolute;
-      width: 16px; height: 22px;
-      border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-      border: 1.5px solid var(--sage);
-      top: 0; left: 50%; transform: translateX(-50%);
-    }
-    .icon-luce::before {
-      content: ''; position: absolute;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 1.5px solid var(--gold);
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      box-shadow: 0 0 0 5px rgba(184,155,106,0.12);
-    }
-    .icon-luce::after {
-      content: ''; position: absolute;
-      width: 32px; height: 1px;
-      background: rgba(184,155,106,0.3);
-      top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(45deg);
-      box-shadow: 0 0 0 0, 0 0 0 0;
-    }
-    .icon-temp::before {
-      content: ''; position: absolute;
-      width: 8px; height: 22px;
-      border: 1.5px solid rgba(201,135,122,0.7);
-      border-radius: 4px;
-      bottom: 0; left: 50%; transform: translateX(-50%);
-    }
-    .icon-temp::after {
-      content: ''; position: absolute;
-      width: 14px; height: 14px; border-radius: 50%;
-      background: rgba(201,135,122,0.3);
-      border: 1.5px solid rgba(201,135,122,0.6);
-      bottom: -2px; left: 50%; transform: translateX(-50%);
-    }
-    .icon-terra::before {
-      content: ''; position: absolute;
-      width: 28px; height: 10px;
-      border-radius: 50% 50% 0 0;
-      border: 1.5px solid rgba(184,155,106,0.6);
-      border-bottom: none;
-      bottom: 4px; left: 50%; transform: translateX(-50%);
-    }
-    .icon-terra::after {
-      content: ''; position: absolute;
-      width: 36px; height: 1px;
-      background: rgba(184,155,106,0.4);
-      bottom: 4px; left: 0;
-    }
-    .icon-vaso::before {
-      content: ''; position: absolute;
-      width: 24px; height: 20px;
-      border: 1.5px solid rgba(122,140,110,0.6);
-      border-radius: 0 0 4px 4px;
-      bottom: 0; left: 50%; transform: translateX(-50%);
-      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
-    }
-    .icon-vaso::after {
-      content: ''; position: absolute;
-      width: 28px; height: 1px;
-      background: rgba(122,140,110,0.5);
-      bottom: 20px; left: 50%; transform: translateX(-50%);
-    }
- 
-    .cura-name {
-      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
-      font-weight: 400; color: var(--cream); margin-bottom: 0.5rem;
-    }
-    .cura-desc { font-size: 0.76rem; font-weight: 300; line-height: 1.7; color: rgba(247,242,235,0.4); }
- 
-    /* ═══════════════════════ PERSONALIZZAZIONE BAND ═══════════════════════ */
-    .custom-band {
-      background: var(--moss);
-      padding: 4rem 2.5rem;
-      position: relative; overflow: hidden;
-    }
-    .custom-band::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(
-        90deg, transparent 0px, transparent 80px,
-        rgba(247,242,235,0.04) 80px, rgba(247,242,235,0.04) 81px
-      );
-    }
-    .custom-inner {
-      max-width: 1280px; margin: 0 auto; position: relative;
-      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3rem;
-    }
-    .custom-label {
-      font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
-      color: rgba(247,242,235,0.5); margin-bottom: 0.8rem;
-    }
-    .custom-heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; line-height: 1.1; color: var(--cream);
-    }
-    .custom-heading em { font-style: italic; color: var(--petal); }
-    .custom-actions { display: flex; flex-direction: column; gap: 0.8rem; min-width: 200px; }
-    .btn-cream {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 0.9rem 2rem; background: var(--cream); color: var(--moss);
-      text-decoration: none; border: 1px solid var(--cream); text-align: center;
-      transition: background 0.3s, color 0.3s;
-    }
-    .btn-cream:hover { background: transparent; color: var(--cream); }
-    .btn-ghost-cream {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 0.9rem 2rem; background: transparent; color: rgba(247,242,235,0.7);
-      text-decoration: none; border: 1px solid rgba(247,242,235,0.3); text-align: center;
-      transition: border-color 0.3s, color 0.3s;
-    }
-    .btn-ghost-cream:hover { border-color: var(--cream); color: var(--cream); }
- 
-    /* ═══════════════════════ CTA BOTTOM ═══════════════════════ */
-    .cta-bottom {
-      max-width: 1280px; margin: 0 auto; padding: 6rem 2.5rem;
-      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3rem;
-    }
-    .cta-label { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); font-weight: 300; margin-bottom: 1rem; }
-    .cta-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.1; color: var(--ink); }
-    .cta-heading em { font-style: italic; color: var(--blush); }
-    .cta-actions { display: flex; flex-direction: column; gap: 0.8rem; min-width: 220px; }
-    .btn-ink {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 1rem 2rem; background: var(--ink); color: var(--cream);
-      text-decoration: none; border: 1px solid var(--ink); text-align: center; transition: background 0.3s, color 0.3s;
-    }
-    .btn-ink:hover { background: transparent; color: var(--ink); }
-    .btn-outline-ink {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
-      padding: 1rem 2rem; background: transparent; color: var(--ink);
-      text-decoration: none; border: 1px solid rgba(44,37,32,0.25); text-align: center; transition: border-color 0.3s, color 0.3s;
-    }
-    .btn-outline-ink:hover { border-color: var(--blush); color: var(--blush); }
- 
-    /* ═══════════════════════ FOOTER ═══════════════════════ */
-    .footer-rule { border-top: 1px solid rgba(184,155,106,0.2); }
-    .footer-mini {
-      max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .footer-copy { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(44,37,32,0.35); }
-    .footer-map {
-      font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--moss); text-decoration: none; font-weight: 400; transition: color 0.3s;
-    }
-    .footer-map:hover { color: var(--blush); }
- 
-    /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
-    @media (max-width: 1100px) {
-      .plants-grid { grid-template-columns: repeat(2, 1fr); }
-      .plant-card:nth-child(1),
-      .plant-card:nth-child(6) { grid-column: span 2; }
-      .cura-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-      .cura-item { border-right: none; padding: 1.5rem 0; border-bottom: 1px solid rgba(184,155,106,0.1); }
-      .cura-item:last-child { border-bottom: none; }
-      .cura-item:not(:first-child) { padding-left: 0; }
-      .categories-inner { grid-template-columns: repeat(2,1fr); }
-      .cat-item { border-bottom: 1px solid rgba(184,155,106,0.1); }
-    }
-    @media (max-width: 768px) {
-      .nav-left, .nav-right { display: none; }
-      .hamburger { display: flex; }
-      .nav-inner { grid-template-columns: auto 1fr auto; padding: 0 1.5rem; }
-      .logo { grid-column: 2; justify-self: center; }
- 
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-art { height: 300px; }
-      .hero-text { padding: 3rem 1.5rem; }
-      .section-intro { grid-template-columns: 1fr; gap: 1.5rem; padding: 3rem 1.5rem 0; }
-      .filter-wrap { flex-wrap: wrap; }
-      .plants-section { padding: 2rem 1.5rem 4rem; }
-      .plants-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .plant-card:nth-child(1),
-      .plant-card:nth-child(6) { grid-column: span 1; }
-      .cura-grid { grid-template-columns: repeat(2,1fr); }
-      .cura-header { grid-template-columns: 1fr; gap: 1.5rem; }
-      .custom-inner, .cta-bottom { grid-template-columns: 1fr; }
-      .cta-actions, .custom-actions { flex-direction: row; flex-wrap: wrap; }
-      .footer-mini { flex-direction: column; gap: 1rem; text-align: center; }
-      .categories-inner { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Bottega del Fiore</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Jost&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin:0;
+  font-family:'Jost', sans-serif;
+  background:#f7f2eb;
+}
+
+/* HEADER */
+header {
+  text-align:center;
+  padding:40px 20px;
+}
+
+h1 {
+  font-family:'Cormorant Garamond', serif;
+  font-size:40px;
+}
+
+/* BOTTONI FILTRO */
+.filters {
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.filter-btn {
+  padding:10px 18px;
+  margin:5px;
+  border:none;
+  background:#ddd;
+  cursor:pointer;
+  border-radius:20px;
+  transition:0.3s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background:#4a5e3a;
+  color:#fff;
+}
+
+/* GRIGLIA */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+/* CARD */
+.card {
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  text-align:center;
+  transition:0.3s;
+}
+
+.card:hover {
+  transform:translateY(-5px);
+}
+
+.card img {
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.card h3 {
+  padding:15px;
+  font-family:'Cormorant Garamond', serif;
+}
+
+/* CTA */
+.cta {
+  text-align:center;
+  padding:50px 20px;
+}
+
+.btn {
+  display:inline-block;
+  padding:15px 25px;
+  background:#2c2520;
+  color:#fff;
+  text-decoration:none;
+  border-radius:5px;
+}
+</style>
 </head>
+
 <body>
- 
-  <!-- ═══ NAVBAR ═══ -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <div class="nav-left">
-        <a href="index.html"        class="nav-link">Il Negozio</a>
-        <a href="composizioni.html" class="nav-link">Composizioni</a>
-        <a href="piante.html"       class="nav-link active">Piante</a>
-      </div>
-      <a href="index.html" class="logo">
-        <div class="logo-mark"></div>
-        <span class="logo-name">La Bottega del Fiore</span>
-        <span class="logo-sub">Florist · Artigiano</span>
-      </a>
-      <div class="nav-right">
-        <a href="#eventi"   class="nav-link">Eventi</a>
-        <a href="#contatti" class="nav-link">Contatti</a>
-        <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
-           target="_blank" rel="noopener" class="nav-cta">Trovaci</a>
-      </div>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
- 
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html"        class="mobile-link">Il Negozio</a>
-    <a href="composizioni.html" class="mobile-link">Composizioni</a>
-    <a href="piante.html"       class="mobile-link">Piante</a>
-    <a href="#eventi"           class="mobile-link">Eventi &amp; Matrimoni</a>
-    <a href="#contatti"         class="mobile-link">Contatti</a>
-    <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
-       target="_blank" rel="noopener" class="mobile-link">Trovaci su Maps</a>
+
+<header>
+  <h1>La Bottega del Fiore</h1>
+  <p>I nostri fiori di stagione</p>
+</header>
+
+<!-- FILTRI -->
+<div class="filters">
+  <button class="filter-btn active" data-filter="tutti">Tutti</button>
+  <button class="filter-btn" data-filter="estate">Estivi</button>
+  <button class="filter-btn" data-filter="inverno">Invernali</button>
+  <button class="filter-btn" data-filter="primavera">Primaverili</button>
+  <button class="filter-btn" data-filter="autunno">Autunnali</button>
+</div>
+
+<!-- GRIGLIA FIORI -->
+<div class="grid">
+
+  <!-- ESTATE -->
+  <div class="card" data-cat="estate">
+    <img src="https://source.unsplash.com/400x400/?sunflower">
+    <h3>Girasole</h3>
   </div>
- 
-  <!-- ═══ HERO DARK ═══ -->
-  <section class="hero">
-    <div class="hero-art">
-      <div class="leaf-shape"></div>
-      <div class="leaf-orb"></div>
-    </div>
-    <div class="hero-text">
-      <p class="hero-label">Verde permanente</p>
-      <h1 class="hero-title">
-        Piante che<br>
-        <em>restano con te</em>
-      </h1>
-      <p class="hero-desc">
-        Più di un ornamento — una presenza viva. Selezioniamo piante da interno
-        e da esterno per ogni ambiente, clima e livello di cura. 
-        Ogni pianta viene consegnata con scheda di coltivazione personalizzata.
-      </p>
-      <div class="hero-actions">
-        <a href="#catalogo" class="btn-sage">Esplora il catalogo</a>
-        <a href="#cura" class="btn-ghost">Guida alla cura</a>
-      </div>
-    </div>
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span>Scorri</span>
-    </div>
-  </section>
- 
-  <!-- ═══ CATEGORIES STRIP ═══ -->
-  <nav class="categories" aria-label="Categorie piante">
-    <div class="categories-inner">
-      <a href="#catalogo" class="cat-item current" data-filter="interno">
-        <div class="cat-num">01</div>
-        <div class="cat-name">Da <em>Interno</em></div>
-        <div class="cat-count">12 varietà</div>
-      </a>
-      <a href="#catalogo" class="cat-item" data-filter="esterno">
-        <div class="cat-num">02</div>
-        <div class="cat-name">Da <em>Esterno</em></div>
-        <div class="cat-count">8 varietà</div>
-      </a>
-      <a href="#catalogo" class="cat-item" data-filter="succulente">
-        <div class="cat-num">03</div>
-        <div class="cat-name">Succulente <em>&amp; Cactus</em></div>
-        <div class="cat-count">6 varietà</div>
-      </a>
-      <a href="#catalogo" class="cat-item" data-filter="regalo">
-        <div class="cat-num">04</div>
-        <div class="cat-name">Piante <em>Regalo</em></div>
-        <div class="cat-count">5 confezioni</div>
-      </a>
-    </div>
-  </nav>
- 
-  <!-- ═══ SECTION INTRO + FILTER ═══ -->
-  <div class="section-intro" id="catalogo">
-    <div class="section-intro-text">
-      <p class="section-label">Il nostro catalogo</p>
-      <h2 class="section-heading">Piante selezionate <em>con cura</em></h2>
-    </div>
-    <div class="filter-wrap">
-      <button class="filter-btn active" data-filter="tutti">Tutti</button>
-      <button class="filter-btn" data-filter="interno">Interno</button>
-      <button class="filter-btn" data-filter="esterno">Esterno</button>
-      <button class="filter-btn" data-filter="succulente">Succulente</button>
-      <button class="filter-btn" data-filter="regalo">Regalo</button>
-    </div>
+
+  <div class="card" data-cat="estate">
+    <img src="https://source.unsplash.com/400x400/?lavender">
+    <h3>Lavanda</h3>
   </div>
-  <div style="max-width:1280px;margin:0 auto;padding:0 2.5rem;">
-    <div class="rule-line" style="max-width:100%;margin:2.5rem 0 0;padding:0;"></div>
+
+  <!-- INVERNO -->
+  <div class="card" data-cat="inverno">
+    <img src="https://source.unsplash.com/400x400/?poinsettia">
+    <h3>Stella di Natale</h3>
   </div>
- 
-  <!-- ═══ PLANTS GRID ═══ -->
-  <section class="plants-section">
-    <div class="plants-grid" id="plantsGrid">
- 
-      <!-- 1 — Featured wide -->
-      <article class="plant-card" data-cat="interno">
-        <div class="plant-vis vis-monstera">
-          <span class="plant-badge badge-gold">In evidenza</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">01</span>
-          <h2 class="plant-name">Monstera <em>Deliciosa</em></h2>
-          <p class="plant-latin">Monstera deliciosa</p>
-          <p class="plant-desc">L'icona del verde d'interni. Foglie ampie e forate che portano carattere in qualsiasi spazio. Cresce lentamente ma con personalità — fedele compagna per anni.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Indiretta</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 7 gg</div></div>
-            <div class="meta-item"><div class="meta-label">Difficoltà</div><div class="meta-val">Facile</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 22 <span>€ · vaso 14cm</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 2 -->
-      <article class="plant-card" data-cat="succulente">
-        <div class="plant-vis vis-cactus">
-          <span class="plant-badge badge-cream">Succulenta</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">02</span>
-          <h2 class="plant-name">Cactus <em>Colonnare</em></h2>
-          <p class="plant-latin">Cereus peruvianus</p>
-          <p class="plant-desc">Architettura naturale. Richiede pochissime cure e porta verticalità a qualsiasi angolo. Ideale per chi si avvicina al mondo delle piante.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Diretta</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 21 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 14 <span>€</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 3 -->
-      <article class="plant-card" data-cat="interno regalo">
-        <div class="plant-vis vis-orchidea">
-          <span class="plant-badge badge-new">Novità</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">03</span>
-          <h2 class="plant-name">Orchidea <em>Phalaenopsis</em></h2>
-          <p class="plant-latin">Phalaenopsis spp.</p>
-          <p class="plant-desc">Eleganza senza sforzo. Fiorisce per mesi, poi riprende. Un grande classico del regalo raffinato — disponibile in bianco, rosa e bordeaux.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Indiretta</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 10 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 18 <span>€</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 4 -->
-      <article class="plant-card" data-cat="interno">
-        <div class="plant-vis vis-pothos">
-          <span class="plant-badge badge-sage">Facile</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">04</span>
-          <h2 class="plant-name">Pothos <em>Dorato</em></h2>
-          <p class="plant-latin">Epipremnum aureum</p>
-          <p class="plant-desc">La pianta che non puoi uccidere. Cascata verde per mensole e librerie — ricade con grazia e cresce in ogni condizione.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Anche scarsa</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 10 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 9 <span>€</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 5 -->
-      <article class="plant-card" data-cat="succulente regalo">
-        <div class="plant-vis vis-succulent">
-          <span class="plant-badge badge-cream">Succulenta</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">05</span>
-          <h2 class="plant-name">Composizione <em>Succulente</em></h2>
-          <p class="plant-latin">Echeveria, Sedum &amp; Haworthia</p>
-          <p class="plant-desc">Tre varietà in un'unica ciotola. Geometrie naturali che non richiedono attenzione quotidiana — perfetta sulla scrivania o come regalo.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Diretta</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 14 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 25 <span>€ · set</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 6 — Featured wide -->
-      <article class="plant-card" data-cat="esterno">
-        <div class="plant-vis vis-ulivo">
-          <span class="plant-badge badge-cream">Esterno</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">06</span>
-          <h2 class="plant-name">Ulivo <em>da Terrazzo</em></h2>
-          <p class="plant-latin">Olea europaea</p>
-          <p class="plant-desc">Il mediterraneo in vaso. Portamento antico, foglie argentate, presenza silenziosa. Resiste al calore estivo e porta un frammento di paesaggio al tuo balcone. Disponibile in vaso da 24 a 40 cm.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Pieno sole</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 5–7 gg</div></div>
-            <div class="meta-item"><div class="meta-label">Difficoltà</div><div class="meta-val">Media</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 45 <span>€ · vaso 24cm</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 7 -->
-      <article class="plant-card" data-cat="interno">
-        <div class="plant-vis vis-ficus">
-          <span class="plant-badge badge-dark">Interno</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">07</span>
-          <h2 class="plant-name">Ficus <em>Lyrata</em></h2>
-          <p class="plant-latin">Ficus lyrata</p>
-          <p class="plant-desc">Foglie ampie e coriacee, portamento da albero. Fa dichiarazione in ogni living — richiede una posizione luminosa costante.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Alta indiretta</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 7 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 35 <span>€</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 8 -->
-      <article class="plant-card" data-cat="esterno">
-        <div class="plant-vis vis-palma">
-          <span class="plant-badge badge-dark">Esterno</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot on"></span>
-            <span class="diff-dot on"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">08</span>
-          <h2 class="plant-name">Palma <em>da Terrazzo</em></h2>
-          <p class="plant-latin">Trachycarpus fortunei</p>
-          <p class="plant-desc">Resistente anche agli inverni padani. Rustica, maestosa, capace di trasformare un balcone in un angolo tropicale. Cresce lentamente, dura decenni.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Luce</div><div class="meta-val">Sole pieno</div></div>
-            <div class="meta-item"><div class="meta-label">Acqua</div><div class="meta-val">Ogni 5 gg</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">da 55 <span>€</span></div>
-            <a href="#contatti" class="plant-cta">Acquista</a>
-          </div>
-        </div>
-      </article>
- 
-      <!-- 9 -->
-      <article class="plant-card" data-cat="regalo interno">
-        <div class="plant-vis vis-zen">
-          <span class="plant-badge badge-gold">Regalo</span>
-          <div class="plant-diff">
-            <span class="diff-dot on"></span>
-            <span class="diff-dot"></span>
-            <span class="diff-dot"></span>
-          </div>
-        </div>
-        <div class="plant-body">
-          <span class="plant-num">09</span>
-          <h2 class="plant-name">Kit <em>Benvenuto Verde</em></h2>
-          <p class="plant-latin">Confezione regalo — 3 piante</p>
-          <p class="plant-desc">Una pianta facile, una succulenta e un vasetto di erbe aromatiche. Con scheda di cura, terriccio e vaso in ceramica artigianale. Il regalo perfetto.</p>
-          <div class="plant-meta">
-            <div class="meta-item"><div class="meta-label">Include</div><div class="meta-val">3 piante + vaso</div></div>
-            <div class="meta-item"><div class="meta-label">Consegna</div><div class="meta-val">24h</div></div>
-          </div>
-          <div class="plant-footer">
-            <div class="plant-price">65 <span>€ · set completo</span></div>
-            <a href="#contatti" class="plant-cta">Regala</a>
-          </div>
-        </div>
-      </article>
- 
-    </div>
-  </section>
- 
-  <!-- ═══ CURA SECTION ═══ -->
-  <section class="cura-section" id="cura">
-    <div class="cura-inner">
-      <div class="cura-header">
-        <h2 class="cura-title" id="curaTitle">Ogni pianta ha<br>i suoi <em>ritmi</em></h2>
-        <p class="cura-intro" id="curaIntro">
-          Con ogni acquisto ti consegniamo una scheda di cura personalizzata. 
-          Cinque variabili da tenere a mente — e tutto il resto lo fa la natura.
-        </p>
-      </div>
-      <div class="cura-grid">
-        <div class="cura-item" id="ci1">
-          <div class="cura-icon icon-acqua"></div>
-          <h3 class="cura-name">Acqua</h3>
-          <p class="cura-desc">Non annaffiare per abitudine — annaffia quando serve. Il segreto è aspettare che i primi centimetri di terra si asciughino.</p>
-        </div>
-        <div class="cura-item" id="ci2">
-          <div class="cura-icon icon-luce"></div>
-          <h3 class="cura-name">Luce</h3>
-          <p class="cura-desc">Diretta o indiretta, poche ore o molte — ogni specie ha le sue preferenze. Ti aiutiamo a trovare il posto giusto in casa tua.</p>
-        </div>
-        <div class="cura-item" id="ci3">
-          <div class="cura-icon icon-temp"></div>
-          <h3 class="cura-name">Temperatura</h3>
-          <p class="cura-desc">La maggior parte delle piante da interno ama tra i 18° e i 24°. Attenzione ai correnti d'aria fredda e ai termosifoni.</p>
-        </div>
-        <div class="cura-item" id="ci4">
-          <div class="cura-icon icon-terra"></div>
-          <h3 class="cura-name">Substrato</h3>
-          <p class="cura-desc">Un buon terriccio fa tutta la differenza. Usiamo mix specifici per ogni famiglia botanica — universale, drenante o per succulente.</p>
-        </div>
-        <div class="cura-item" id="ci5">
-          <div class="cura-icon icon-vaso"></div>
-          <h3 class="cura-name">Rinvaso</h3>
-          <p class="cura-desc">Una volta ogni uno o due anni, in primavera. Passiamo sempre a un vaso leggermente più grande per non stressare le radici.</p>
-        </div>
-      </div>
-    </div>
-  </section>
- 
-  <!-- ═══ PERSONALIZZAZIONE BAND ═══ -->
-  <section class="custom-band">
-    <div class="custom-inner">
-      <div>
-        <p class="custom-label">Servizio su misura</p>
-        <h2 class="custom-heading">Cerchi qualcosa<br>di <em>specifico?</em></h2>
-      </div>
-      <div class="custom-actions">
-        <a href="#contatti" class="btn-cream">Richiedi una consulenza</a>
-        <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
-           target="_blank" rel="noopener" class="btn-ghost-cream">Vieni in bottega</a>
-      </div>
-    </div>
-  </section>
- 
-  <!-- ═══ CTA BOTTOM ═══ -->
-  <div class="cta-bottom" id="contatti">
-    <div>
-      <p class="cta-label">Siamo qui per te</p>
-      <h2 class="cta-heading">Ordina, regala,<br><em>sorprendi.</em></h2>
-    </div>
-    <div class="cta-actions">
-      <a href="tel:+39000000000" class="btn-ink">Chiamaci</a>
-      <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
-         target="_blank" rel="noopener" class="btn-outline-ink">Vieni a trovarci</a>
-    </div>
+
+  <div class="card" data-cat="inverno">
+    <img src="https://source.unsplash.com/400x400/?cyclamen">
+    <h3>Ciclamino</h3>
   </div>
- 
-  <!-- ═══ FOOTER ═══ -->
-  <div class="footer-rule">
-    <div class="footer-mini">
-      <span class="footer-copy">© 2024 La Bottega del Fiore — Tutti i diritti riservati</span>
-      <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
-         target="_blank" rel="noopener" class="footer-map">Aprici su Maps</a>
-    </div>
+
+  <!-- PRIMAVERA -->
+  <div class="card" data-cat="primavera">
+    <img src="https://source.unsplash.com/400x400/?tulip">
+    <h3>Tulipani</h3>
   </div>
- 
-  <script>
-    // Navbar scroll
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 20));
- 
-    // Hamburger
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      mobileMenu.classList.toggle('open');
+
+  <div class="card" data-cat="primavera">
+    <img src="https://source.unsplash.com/400x400/?daisy">
+    <h3>Margherite</h3>
+  </div>
+
+  <!-- AUTUNNO -->
+  <div class="card" data-cat="autunno">
+    <img src="https://source.unsplash.com/400x400/?chrysanthemum">
+    <h3>Crisantemi</h3>
+  </div>
+
+  <div class="card" data-cat="autunno">
+    <img src="https://source.unsplash.com/400x400/?dahlia">
+    <h3>Dalia</h3>
+  </div>
+
+</div>
+
+<!-- CHIAMACI -->
+<div class="cta">
+  <a href="tel:0522576309" class="btn">Chiamaci</a>
+</div>
+
+<script>
+const buttons = document.querySelectorAll(".filter-btn");
+const cards = document.querySelectorAll(".card");
+
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    buttons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const filter = btn.dataset.filter;
+
+    cards.forEach(card => {
+      if(filter === "tutti" || card.dataset.cat === filter){
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
     });
-    mobileMenu.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
-      hamburger.classList.remove('open'); mobileMenu.classList.remove('open');
-    }));
- 
-    // Filter
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.plant-card');
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const f = btn.dataset.filter;
-        cards.forEach(card => {
-          const cats = card.dataset.cat || '';
-          if (f === 'tutti' || cats.includes(f)) {
-            card.style.display = '';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(14px)';
-            requestAnimationFrame(() => {
-              card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-              card.style.opacity = '1';
-              card.style.transform = 'translateY(0)';
-            });
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
- 
-    // Category strip nav clicks -> filter
-    document.querySelectorAll('.cat-item').forEach(item => {
-      item.addEventListener('click', e => {
-        e.preventDefault();
-        document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('current'));
-        item.classList.add('current');
-        const f = item.dataset.filter;
-        const matchBtn = [...filterBtns].find(b => b.dataset.filter === f);
-        if (matchBtn) matchBtn.click();
-        document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
- 
-    // Scroll reveal for cura section
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.12 });
-    ['curaTitle','curaIntro','ci1','ci2','ci3','ci4','ci5'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-  </script>
+  });
+});
+</script>
+
 </body>
 </html>
