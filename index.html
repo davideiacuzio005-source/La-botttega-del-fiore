@@ -339,6 +339,124 @@
       }
       .logo { grid-column: 2; justify-self: center; }
     }
+
+    /* ─── INFO PREMIUM ─── */
+.info-section {
+  padding: 7rem 2rem 6rem;
+  text-align: center;
+  position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1.2s 0.2s forwards;
+}
+
+/* glow botanico */
+.info-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(122,140,110,0.12), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(201,135,122,0.1), transparent 60%);
+  pointer-events: none;
+}
+
+.info-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.info-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.info-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}
+
+/* stato aperto */
+.open-status {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  color: var(--sage);
+}
+
+.open-status.open { color: var(--sage); }
+.open-status.closed { color: var(--blush); }
+
+/* card */
+.hours-card {
+  border: 1px solid rgba(184,155,106,0.25);
+  padding: 2.2rem 2.8rem;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(10px);
+  margin-bottom: 2.8rem;
+  transition: transform 0.4s ease;
+}
+
+.hours-card:hover {
+  transform: translateY(-4px);
+}
+
+/* righe */
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.92rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(184,155,106,0.15);
+  transition: all 0.3s ease;
+}
+
+.hours-row:last-child { border-bottom: none; }
+
+/* giorno corrente */
+.hours-row.today {
+  color: var(--moss);
+  font-weight: 500;
+  transform: scale(1.02);
+}
+
+/* giorno chiuso */
+.hours-row.closed span:last-child {
+  color: var(--blush);
+}
+
+/* CTA migliorate */
+.info-actions {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.info-actions a {
+  position: relative;
+  overflow: hidden;
+}
+
+.info-actions a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.info-actions a:hover::after {
+  opacity: 1;
+}
+    
   </style>
 </head>
 <body>
@@ -409,7 +527,29 @@
     </div>
     <div class="divider"></div>
   </section>
- 
+
+  <!-- ═══ ORARI PREMIUM ═══ -->
+<section class="info-section">
+  <div class="info-container">
+
+    <p class="info-tag">Orari del negozio</p>
+    <h2 class="info-title">Quando trovarci</h2>
+
+    <div id="openStatus" class="open-status"></div>
+
+    <div class="hours-card" id="hoursCard">
+      <!-- Generato da JS -->
+    </div>
+
+    <div class="info-actions">
+      <a href="tel:0522576309" class="btn-primary">Contattaci</a>
+      <a href="https://maps.app.goo.gl/P2EiUiBZ4B3QrrhD7?g_st=ic"
+         target="_blank" class="btn-secondary">Vieni a trovarci</a>
+    </div>
+
+  </div>
+</section>
+  
   <script>
     // Scroll shadow on navbar
     const navbar = document.getElementById('navbar');
@@ -432,6 +572,59 @@
         mobileMenu.classList.remove('open');
       });
     });
+
+    const schedule = [
+  { day: "Domenica", open: ["09:30-12:30"] },
+  { day: "Lunedì", open: [] },
+  { day: "Martedì", open: ["09:00-12:30", "15:30-19:00"] },
+  { day: "Mercoledì", open: ["09:00-12:30", "15:30-19:00"] },
+  { day: "Giovedì", open: ["09:00-12:30", "15:30-19:00"] },
+  { day: "Venerdì", open: ["09:00-12:30", "15:30-19:00"] },
+  { day: "Sabato", open: ["09:00-19:00"] }
+];
+
+const now = new Date();
+const todayIndex = now.getDay();
+const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+const hoursCard = document.getElementById("hoursCard");
+const statusBox = document.getElementById("openStatus");
+
+function isOpenToday(dayData) {
+  return dayData.open.some(range => {
+    const [start, end] = range.split("-");
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+
+    const startMin = sh * 60 + sm;
+    const endMin = eh * 60 + em;
+
+    return currentMinutes >= startMin && currentMinutes <= endMin;
+  });
+}
+
+// Stato aperto/chiuso
+const todayData = schedule[todayIndex];
+const openNow = isOpenToday(todayData);
+
+statusBox.textContent = openNow ? "Aperto ora" : "Chiuso ora";
+statusBox.classList.add(openNow ? "open" : "closed");
+
+// Genera righe
+schedule.forEach((d, i) => {
+  const row = document.createElement("div");
+  row.className = "hours-row";
+
+  if (i === todayIndex) row.classList.add("today");
+  if (d.open.length === 0) row.classList.add("closed");
+
+  const times = d.open.length
+    ? d.open.join(" · ")
+    : "Chiuso";
+
+  row.innerHTML = `<span>${d.day}</span><span>${times}</span>`;
+  hoursCard.appendChild(row);
+});
   </script>
 
 </body>
