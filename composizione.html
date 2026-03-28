@@ -112,7 +112,7 @@
  
     /* ── Hamburger (mobile) ── */
     .burger {
-      display: flex;
+      display: none;
       flex-direction: column;
       gap: 5px;
       background: none;
@@ -509,7 +509,14 @@
       <span class="logo-tagline">Atelier floreale</span>
     </a>
  
-    <!-- Desktop: voci sx + dx non ci sono, tutto nel burger -->
+    <!-- MENU VOCI (visibili su desktop) -->
+    <div class="nav-links">
+      <a href="composizioni.html" class="nav-link active">Composizioni</a>
+      <a href="piante.html" class="nav-link">Piante</a>
+      <a href="contatti.html" class="nav-link">Contattaci</a>
+      <a href="https://maps.google.com" target="_blank" class="nav-link">Trovaci su Maps</a>
+    </div>
+
     <!-- Hamburger (mobile) -->
     <button class="burger" id="burger" aria-label="Apri menu">
       <span></span><span></span><span></span>
